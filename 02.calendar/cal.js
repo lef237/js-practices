@@ -8,3 +8,6 @@ let year = parseInt(argv.y) ? argv.y : 2022;
 console.log(argv);
 console.log(month);
 console.log(year);
+
+process.stdout.write(`${month}`);
+
