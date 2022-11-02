@@ -1,24 +1,25 @@
 #!/usr/bin/env node
 
-// import endOfMonth from 'date-fns';
-import { endOfMonth } from 'date-fns'
-// let argv = require('minimist')(process.argv.slice(2));
-// var endOfMonth = require('date-fns/startOfMonth')
-
-import minimist from 'minimist';
+let argv = require('minimist')(process.argv.slice(2));
+let lastDayOfMonth = require('date-fns/lastDayOfMonth')
 
 
-const argv = minimist(process.argv.slice(2))
+let month = parseInt(argv.m) ? argv.m -1 : 10;
+let year = parseInt(argv.y) ? argv.y : 2022;
+let target_date = new Date(year, month)
+let now_date = new Date()
 
-console.log(new Date('2000-01-01T00:00:00'))
-console.log(new Date(1999, 11, 31, 23, 59, 59, 999))
+// debugger
 
-const result = endOfMonth(new Date(2014, 8));
+console.log(now_date)
+console.log(now_date.getMonth()+1)
+
+console.log(target_date)
+
+let result = lastDayOfMonth(target_date);
 console.log(result);
 
 
-let month = parseInt(argv.m) ? argv.m : 11;
-let year = parseInt(argv.y) ? argv.y : 2022;
 let first_day = 1;
 
 
