@@ -1,3 +1,6 @@
-fetch("https://bootcamp.fjord.jp")
-  .then((response) => response.text())
-  .then((data) => console.log(data));
+const myAsync = async (url) => {
+  const response = await fetch(url);
+  const data = await response.text();
+  console.log(data);
+};
+myAsync("https://bootcamp.fjord.jp");
