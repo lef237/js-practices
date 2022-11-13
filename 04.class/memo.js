@@ -4,26 +4,13 @@ const argv = require("minimist")(process.argv.slice(2));
 console.log(argv.l);
 console.log(argv.r);
 console.log(argv.d);
-console.log(argv);
-
-// const readline = require("readline").createInterface({
-//   input: process.stdin,
-//   output: process.stdout,
-// });
-
-// readline.question("What is your name? ", (answer) => {
-//   console.log(`Hello, ${answer}!`);
-//   readline.close();
-// });
-
-// let aisatu = "こんんちは。\n今日は……";
-// console.log(`テスト, ${aisatu}`);
 
 process.stdin.setEncoding("utf8");
 
-let lines = [];
+let lines = []; //ここに受け取ったテキストを保管する。改行ごとにカンマで区切られて配列になる
 let reader = require("readline").createInterface({
-  input: process.stdin,
+  input: process.stdin, //入力を受け取れるようになる
+  output: process.stdout, //ctrl+c後に結果が出力される
 });
 
 reader.on("line", (line) => {
