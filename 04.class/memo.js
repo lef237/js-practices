@@ -114,6 +114,47 @@ const referenceMemos = () => {
     .catch(console.error);
 };
 
+const deleteMemo = () => {
+  let jsonFile = fs.readFileSync("memo.json", "utf8");
+  let parsedJsonData = JSON.parse(jsonFile);
+  const { Select } = require("enquirer");
+  const prompt = new Select({
+    name: "memos",
+    message: "Select a note you want to delete:",
+    // header: yosay("Welcome to my awesome generator!"),
+    footer() {
+      // let fn = colors[keys[++idx % keys.length]];
+      // return "\n" + fn("(Scroll up and down to reveal more choices)");
+      return "Scroll up and down to reveal more choices";
+    },
+    limit: 5,
+    choices: parsedJsonData,
+    result() {
+      // ☆数値のままだと「0」をreturnで渡せないため、toString()で文字列にしている
+      let number = this.index.toString();
+      // console.log(number);
+      return number;
+    },
+  });
+
+  prompt
+    .run()
+    .then((number) => {
+      console.log(number);
+      let jsonFile = fs.readFileSync("memo.json", "utf8");
+      let parsedJsonData = JSON.parse(jsonFile);
+      // console.log(parsedJsonData);
+      console.log(`${parsedJsonData[number].title}のメモを削除しました。`);
+      parsedJsonData.splice(number, 1);
+      console.log(parsedJsonData);
+      let jsonedData = JSON.stringify(parsedJsonData);
+      fs.writeFileSync("memo.json", jsonedData);
+    })
+    .catch(console.error);
+};
+
+// deleteMemo();
+
 if (argv.l) {
   listMemos();
 } else if (argv.r) {
