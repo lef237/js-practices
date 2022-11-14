@@ -39,7 +39,16 @@ const addMemo = () => {
 
 //オプションlで最初の行だけを表示する
 //この関数を実行する if argv.l
-const listMemos = () => {};
+const listMemos = () => {
+  let jsonFile = fs.readFileSync("memo.json", "utf8");
+  let parsedJsonData = JSON.parse(jsonFile);
+  let firstLineLists = [];
+  parsedJsonData.forEach((element) => {
+    let splitedLines = element.text.split("\n");
+    firstLineLists.push(splitedLines[0]);
+  });
+  firstLineLists.forEach((element) => console.log(element));
+};
 
 if (argv.l) {
   listMemos();
