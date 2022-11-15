@@ -5,7 +5,6 @@ const readline = require("node:readline");
 const fs = require("node:fs");
 const { Select } = require("enquirer");
 
-//mainで綺麗に整えられそう
 const main = () => {
   if (argv.l) {
     listMemos();
@@ -18,7 +17,6 @@ const main = () => {
   }
 };
 
-//JSON関係の繰り返し処理を関数でまとめられそう。
 const parseJsonFile = () => {
   let jsonFile = fs.readFileSync("memo.json", "utf8");
   let parsedJsonData = JSON.parse(jsonFile);
@@ -31,10 +29,7 @@ const writeToJsonFile = (parsedJsonData) => {
 };
 
 const addMemo = () => {
-  // let jsonFile = fs.readFileSync("memo.json", "utf8");
-  // let parsedJsonData = JSON.parse(jsonFile);
   let parsedJsonData = parseJsonFile();
-
   process.stdin.resume();
   process.stdin.setEncoding("utf8");
   let reader = readline.createInterface({
@@ -49,16 +44,12 @@ const addMemo = () => {
     let inputText = lines.join("\n");
     let new_data = { title: lines[0], text: inputText };
     parsedJsonData.push(new_data);
-    // let jsonedData = JSON.stringify(parsedJsonData);
-    // fs.writeFileSync("memo.json", jsonedData);
     writeToJsonFile(parsedJsonData);
     console.log(`メモが追加されました`);
   });
 };
 
 const listMemos = () => {
-  // let jsonFile = fs.readFileSync("memo.json", "utf8");
-  // let parsedJsonData = JSON.parse(jsonFile);
   let parsedJsonData = parseJsonFile();
   let memoTitles = [];
   parsedJsonData.forEach((element) => {
@@ -68,8 +59,6 @@ const listMemos = () => {
 };
 
 const referenceMemos = () => {
-  // let jsonFile = fs.readFileSync("memo.json", "utf8");
-  // let parsedJsonData = JSON.parse(jsonFile);
   let parsedJsonData = parseJsonFile();
   const prompt = new Select({
     name: "memos",
@@ -91,8 +80,6 @@ const referenceMemos = () => {
 };
 
 const deleteMemo = () => {
-  // let jsonFile = fs.readFileSync("memo.json", "utf8");
-  // let parsedJsonData = JSON.parse(jsonFile);
   let parsedJsonData = parseJsonFile();
   const prompt = new Select({
     name: "memos",
@@ -112,14 +99,10 @@ const deleteMemo = () => {
   prompt
     .run()
     .then((number) => {
-      // let jsonFile = fs.readFileSync("memo.json", "utf8");
-      // let parsedJsonData = JSON.parse(jsonFile);
       let parsedJsonData = parseJsonFile();
       console.log(`${parsedJsonData[number].title}のメモを削除しました。`);
       parsedJsonData.splice(number, 1);
       writeToJsonFile(parsedJsonData);
-      // let jsonedData = JSON.stringify(parsedJsonData);
-      // fs.writeFileSync("memo.json", jsonedData);
     })
     .catch(console.error);
 };
