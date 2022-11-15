@@ -18,18 +18,6 @@ const main = () => {
   }
 };
 
-// parseJsonFile() {
-//   let jsonFile = fs.readFileSync("memo.json", "utf8");
-//   let parsedJsonData = JSON.parse(jsonFile);
-//   return parsedJsonData;
-// }
-
-// writeToJsonFile(parsedJsonData) {
-//   let jsonedData = JSON.stringify(parsedJsonData);
-//   fs.writeFileSync("memo.json", jsonedData);
-// }
-
-//親クラスに入れる
 class LoadJson {
   parseJsonFile() {
     let jsonFile = fs.readFileSync("memo.json", "utf8");
@@ -43,18 +31,6 @@ class LoadJson {
   }
 }
 
-// const parseJsonFile = () => {
-//   let jsonFile = fs.readFileSync("memo.json", "utf8");
-//   let parsedJsonData = JSON.parse(jsonFile);
-//   return parsedJsonData;
-// };
-
-// const writeToJsonFile = (parsedJsonData) => {
-//   let jsonedData = JSON.stringify(parsedJsonData);
-//   fs.writeFileSync("memo.json", jsonedData);
-// };
-
-// 親クラスを作って継承して必要なメソッドをこの子クラスで使えるようにする。
 class Memo extends LoadJson {
   constructor() {
     super();
@@ -63,7 +39,6 @@ class Memo extends LoadJson {
 
   addMemo() {
     let parsedJsonData = this.parseJsonData;
-    console.log(this.parseJsonData);
     process.stdin.resume();
     process.stdin.setEncoding("utf8");
     let reader = readline.createInterface({
@@ -80,14 +55,14 @@ class Memo extends LoadJson {
       parsedJsonData.push(new_data);
       this.writeToJsonFile(parsedJsonData);
       console.log(`メモが追加されました`);
-      console.log(this.parseJsonData);
     });
   }
 
   listMemos() {
-    // let parsedJsonData = parseJsonFile();
-    console.log(this.parseJsonData);
     let parsedJsonData = this.parseJsonData;
+    if (parsedJsonData.length === 0) {
+      return console.log(`現在メモはありません。`);
+    }
     let memoTitles = [];
     parsedJsonData.forEach((element) => {
       memoTitles.push(element.title);
@@ -97,6 +72,9 @@ class Memo extends LoadJson {
 
   referenceMemos() {
     let parsedJsonData = this.parseJsonData;
+    if (parsedJsonData.length === 0) {
+      return console.log(`現在メモはありません。`);
+    }
     const prompt = new Select({
       name: "memos",
       message: "Choose a note you want to see:",
@@ -118,7 +96,9 @@ class Memo extends LoadJson {
 
   deleteMemo() {
     let parsedJsonData = this.parseJsonData;
-    console.log(this.index);
+    if (parsedJsonData.length === 0) {
+      return console.log(`現在メモはありません。`);
+    }
     const prompt = new Select({
       name: "memos",
       message: "Select a note you want to delete:",
@@ -145,84 +125,5 @@ class Memo extends LoadJson {
       .catch(console.error);
   }
 }
-
-// const addMemo = () => {
-//   let parsedJsonData = this.parseJsonData;
-//   process.stdin.resume();
-//   process.stdin.setEncoding("utf8");
-//   let reader = readline.createInterface({
-//     input: process.stdin,
-//     output: process.stdout,
-//   });
-//   let lines = [];
-//   reader.on("line", (line) => {
-//     lines.push(line);
-//   });
-//   reader.on("close", () => {
-//     let inputText = lines.join("\n");
-//     let new_data = { title: lines[0], text: inputText };
-//     parsedJsonData.push(new_data);
-//     writeToJsonFile(parsedJsonData);
-//     console.log(`メモが追加されました`);
-//   });
-// };
-
-// const listMemos = () => {
-//   let parsedJsonData = parseJsonFile();
-//   let memoTitles = [];
-//   parsedJsonData.forEach((element) => {
-//     memoTitles.push(element.title);
-//   });
-//   memoTitles.forEach((element) => console.log(element));
-// };
-
-// const referenceMemos = () => {
-//   let parsedJsonData = parseJsonFile();
-//   const prompt = new Select({
-//     name: "memos",
-//     message: "Choose a note you want to see:",
-//     footer() {
-//       return "Scroll up and down to reveal more choices";
-//     },
-//     limit: 5,
-//     choices: parsedJsonData,
-//     result() {
-//       return this.focused.text;
-//     },
-//   });
-
-//   prompt
-//     .run()
-//     .then((text) => console.log(text))
-//     .catch(console.error);
-// };
-
-// const deleteMemo = () => {
-//   let parsedJsonData = parseJsonFile();
-//   const prompt = new Select({
-//     name: "memos",
-//     message: "Select a note you want to delete:",
-//     footer() {
-//       return "Scroll up and down to reveal more choices";
-//     },
-//     limit: 5,
-//     choices: parsedJsonData,
-//     result() {
-//       // 数値のままだと「0」をreturnで渡せないため、toString()で文字列にしている
-//       let number = this.index.toString();
-//       return number;
-//     },
-//   });
-
-//   prompt
-//     .run()
-//     .then((number) => {
-//       let parsedJsonData = parseJsonFile();
-//       console.log(`${parsedJsonData[number].title}のメモを削除しました。`);
-//       parsedJsonData.splice(number, 1);
-//       writeToJsonFile(parsedJsonData);
-//     })
-//     .catch(console.error);
-// };
 
 main();
