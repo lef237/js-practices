@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-let argv = require("minimist")(process.argv.slice(2));
+const argv = require("minimist")(process.argv.slice(2));
 const readline = require("node:readline");
 const fs = require("node:fs");
 const { Select } = require("enquirer");
@@ -18,27 +18,27 @@ const main = () => {
   }
 };
 
-class LoadJson {
-  parseJsonFile() {
+class JsonRepository {
+  load() {
     let jsonFile = fs.readFileSync("memo.json", "utf8");
-    let parsedJsonData = JSON.parse(jsonFile);
-    return parsedJsonData;
+    let parsedData = JSON.parse(jsonFile);
+    return parsedData;
   }
 
-  writeToJsonFile(parsedJsonData) {
-    let jsonedData = JSON.stringify(parsedJsonData);
+  save(parsedData) {
+    let jsonedData = JSON.stringify(parsedData);
     fs.writeFileSync("memo.json", jsonedData);
   }
 }
 
-class Memo extends LoadJson {
+class Memo {
   constructor() {
-    super();
-    this.parseJsonData = this.parseJsonFile();
+    let dbconnection = new JsonRepository();
+    this.parsedData = dbconnection.load();
   }
 
   addMemo() {
-    let parsedJsonData = this.parseJsonData;
+    let parsedData = this.parsedData;
     process.stdin.resume();
     process.stdin.setEncoding("utf8");
     let reader = readline.createInterface({
@@ -52,27 +52,28 @@ class Memo extends LoadJson {
     reader.on("close", () => {
       let inputText = lines.join("\n");
       let new_data = { title: lines[0], text: inputText };
-      parsedJsonData.push(new_data);
-      this.writeToJsonFile(parsedJsonData);
+      parsedData.push(new_data);
+      let dbConnection = new JsonRepository();
+      dbConnection.save(parsedData);
       console.log(`メモが追加されました`);
     });
   }
 
   listMemos() {
-    let parsedJsonData = this.parseJsonData;
-    if (parsedJsonData.length === 0) {
+    let parsedData = this.parsedData;
+    if (parsedData.length === 0) {
       return console.log(`現在メモはありません。`);
     }
     let memoTitles = [];
-    parsedJsonData.forEach((element) => {
+    parsedData.forEach((element) => {
       memoTitles.push(element.title);
     });
     memoTitles.forEach((element) => console.log(element));
   }
 
   async referenceMemos() {
-    let parsedJsonData = this.parseJsonData;
-    if (parsedJsonData.length === 0) {
+    let parsedData = this.parsedData.map((list) => ({ ...list }));
+    if (parsedData.length === 0) {
       return console.log(`現在メモはありません。`);
     }
     const prompt = new Select({
@@ -82,23 +83,23 @@ class Memo extends LoadJson {
         return "Scroll up and down to reveal more choices";
       },
       limit: 5,
-      choices: parsedJsonData,
+      choices: parsedData,
       result() {
         return this.focused.text;
       },
     });
 
     try {
-      let memoText = await prompt.run()
-      console.log(memoText)
+      let memoText = await prompt.run();
+      console.log(memoText);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 
   async deleteMemo() {
-    let parsedJsonData = this.parseJsonData;
-    if (parsedJsonData.length === 0) {
+    let parsedData = this.parsedData.map((list) => ({ ...list }));
+    if (parsedData.length === 0) {
       return console.log(`現在メモはありません。`);
     }
     const prompt = new Select({
@@ -108,7 +109,7 @@ class Memo extends LoadJson {
         return "Scroll up and down to reveal more choices";
       },
       limit: 5,
-      choices: parsedJsonData,
+      choices: parsedData,
       result() {
         let number = this.index.toString();
         return number;
@@ -116,13 +117,14 @@ class Memo extends LoadJson {
     });
 
     try {
-      let number = await prompt.run()
-      parsedJsonData = this.parseJsonFile()
-      console.log(`${parsedJsonData[number].title}のメモを削除しました。`);
-      parsedJsonData.splice(number, 1);
-      this.writeToJsonFile(parsedJsonData);
+      let number = await prompt.run();
+      parsedData = this.parsedData;
+      console.log(`${parsedData[number].title}のメモを削除しました。`);
+      parsedData.splice(number, 1);
+      let dbConnection = new JsonRepository();
+      dbConnection.save(parsedData);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 }
