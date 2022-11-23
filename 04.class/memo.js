@@ -70,7 +70,7 @@ class Memo extends LoadJson {
     memoTitles.forEach((element) => console.log(element));
   }
 
-  referenceMemos() {
+  async referenceMemos() {
     let parsedJsonData = this.parseJsonData;
     if (parsedJsonData.length === 0) {
       return console.log(`現在メモはありません。`);
@@ -88,13 +88,15 @@ class Memo extends LoadJson {
       },
     });
 
-    prompt
-      .run()
-      .then((text) => console.log(text))
-      .catch(console.error);
+    try {
+      let memoText = await prompt.run()
+      console.log(memoText)
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-  deleteMemo() {
+  async deleteMemo() {
     let parsedJsonData = this.parseJsonData;
     if (parsedJsonData.length === 0) {
       return console.log(`現在メモはありません。`);
@@ -108,21 +110,20 @@ class Memo extends LoadJson {
       limit: 5,
       choices: parsedJsonData,
       result() {
-        // 数値のままだと「0」をreturnで渡せないため、toString()で文字列にしている
         let number = this.index.toString();
         return number;
       },
     });
 
-    prompt
-      .run()
-      .then((number) => {
-        let parsedJsonData = this.parseJsonFile();
-        console.log(`${parsedJsonData[number].title}のメモを削除しました。`);
-        parsedJsonData.splice(number, 1);
-        this.writeToJsonFile(parsedJsonData);
-      })
-      .catch(console.error);
+    try {
+      let number = await prompt.run()
+      parsedJsonData = this.parseJsonFile()
+      console.log(`${parsedJsonData[number].title}のメモを削除しました。`);
+      parsedJsonData.splice(number, 1);
+      this.writeToJsonFile(parsedJsonData);
+    } catch (error) {
+      console.error(error)
+    }
   }
 }
 
